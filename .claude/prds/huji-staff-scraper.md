@@ -36,9 +36,10 @@ There is no single, unified staff directory for the Hebrew University. Staff inf
 **So that** I can contact relevant personnel without missing anyone.
 
 **Acceptance Criteria:**
-- CSV contains all discoverable staff members
-- Data includes: name, department, faculty, email, website, phone (when available)
-- Updates arrive monthly via email
+- CSV contains all discoverable staff members (including emeritus)
+- Data includes: name, title, position, status, department, faculty, email, phone, website
+- One row per employee (no duplicates)
+- Updates arrive monthly via email (1st of month, 10:00 AM)
 - Changes (added/removed) are clearly highlighted
 
 ### Secondary User: Data Consumer
@@ -98,9 +99,21 @@ There is no single, unified staff directory for the Hebrew University. Staff inf
 - Generate change summary for email notification
 
 #### FR4: Output Generation
-- CSV format with columns: Name, Department, Faculty, Email, Website, Phone
+- CSV format with columns:
+  | Column | Description | Example |
+  |--------|-------------|---------|
+  | Name | Full name (Hebrew or English) | פרופ' יוסי כהן |
+  | Title | Academic/professional title | Professor, Dr., Senior Lecturer |
+  | Position | Specific role | Head of Department, Researcher |
+  | Status | Employment status | Active, Emeritus, Visiting |
+  | Department | Department name | Computer Science |
+  | Faculty | Faculty name | Science |
+  | Email | Contact email | name@huji.ac.il |
+  | Phone | Phone number (if available) | 02-658-XXXX |
+  | Website | Personal/profile page URL | https://... |
 - UTF-8 encoding (Hebrew support)
 - Consistent formatting across all sources
+- One row per employee (deduplicate, use primary department)
 
 #### FR5: Notification System
 - Send email to distribution list on completion
@@ -255,11 +268,15 @@ huji-staff-scraper/
 - Real-time updates (only monthly batch)
 - Staff photos or profile images
 - Research publications or CV data
-- Internal/intranet staff directories
-- Authentication-protected pages
 - Mobile app or web UI
 - API for external consumers
 - Integration with HR systems
+
+## In Scope (Clarified)
+
+- **Password-protected directories**: Attempt to access if credentials available
+- **Emeritus faculty**: Include with Status = "Emeritus"
+- **Duplicate handling**: One row per employee, use primary department affiliation
 
 ## Dependencies
 
@@ -309,9 +326,15 @@ huji-staff-scraper/
 - Retry logic
 - Parser resilience
 
+## Resolved Questions
+
+| Question | Decision |
+|----------|----------|
+| Password-protected directories? | Yes, attempt if credentials available |
+| Include emeritus faculty? | Yes, with Status = "Emeritus" |
+| Staff in multiple departments? | One row per employee, primary department |
+
 ## Open Questions
 
-1. Should we attempt to scrape password-protected internal directories?
-2. What is the acceptable delay between identifying a website structure change and updating the parser?
-3. Should we include emeritus faculty?
-4. How should we handle staff who appear in multiple departments?
+1. What is the acceptable delay between identifying a website structure change and updating the parser?
+2. What credentials (if any) are available for protected directories?
